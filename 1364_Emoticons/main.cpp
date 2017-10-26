@@ -23,11 +23,14 @@ struct Trie{
     Trie();
     void Clear();
     void addNode(pTrieNode parent, char c);
+    void Reset();
 };
 
 int main (){
 
-
+    Trie T;
+    T.Reset();
+    T.Clear();
     return 0;
 }
 
@@ -52,5 +55,13 @@ void Trie::addNode(pTrieNode parent, char c){
     pTrieNode node = new TrieNode(c, parent->size+1);
     elements.push_back(node);
     parent->child.push_back(node);
+
+}
+
+void Trie::Reset(){
+
+    Clear();
+    root = new TrieNode('\0', 0);
+    elements.push_back(root);
 
 }
