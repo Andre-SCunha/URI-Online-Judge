@@ -8,8 +8,11 @@ struct TrieNode;
 struct Trie;
 typedef TrieNode* pTrieNode;
 
-//TRIE
+/////////////////////////
+/* Data Structures */
+////////////////////////
 
+//TrieNode
 struct TrieNode{
     char c;
     int size;
@@ -22,21 +25,23 @@ struct TrieNode{
     void addDicSuf();
 };
 
+//Trie
 struct Trie{
     pTrieNode root;
     list<pTrieNode> elements;
 
     Trie();
     void Clear();
-    void addNode(pTrieNode parent, char c, bool dic);
     void Reset();
+    void addNode(pTrieNode parent, char c, bool dic);
+    void addWord(string s);
     void calcSufx();
     void calcDicSuf();
-    void addWord(string s);
 };
 
-//MAIN
-
+/////////////////////////////
+/* Program Main Flow */
+///////////////////////////
 int main (){
 
     Trie T;
@@ -61,16 +66,15 @@ int main (){
     return 0;
 }
 
-//METHODS
+//////////////////////
+/* Trie Methods */
+////////////////////
 
-    //TRIE
+ //TRIE//******************
 
 Trie::Trie(){
 
-    root = new TrieNode('\0', 0);
-    elements.push_back(root);
-    root->sufix = NULL;
-    root->dicsuf = NULL;
+    Reset();
 
 }
 
@@ -83,6 +87,16 @@ void Trie::Clear(){
 
 }
 
+void Trie::Reset(){
+
+    Clear();
+    root = new TrieNode('\0', 0);
+    elements.push_back(root);
+    root->sufix = NULL;
+    root->dicsuf = NULL;
+
+}
+
 void Trie::addNode(pTrieNode parent, char c, bool dic){
 
     pTrieNode node = new TrieNode(c, parent->size+1);
@@ -92,13 +106,37 @@ void Trie::addNode(pTrieNode parent, char c, bool dic){
 
 }
 
-void Trie::Reset(){
+void Trie::addWord(string s){
 
-    Clear();
-    root = new TrieNode('\0', 0);
-    elements.push_back(root);
-    root->sufix = NULL;
-    root->dicsuf = NULL;
+    pTrieNode p = root;
+    bool f = true;
+    int i;
+    for(i = 0; i < s.size()-1; i++){
+        if (f){
+            f = false;
+            for (pTrieNode j : p->child){
+                if (j->c == s[i]){
+                    p = j; f=true; break;
+                }
+            }
+        }
+        if(!f){
+            addNode(p, s[i], false);
+            p = elements.back();
+        }
+    }
+    if (f){
+    f = false;
+    for (pTrieNode j : p->child){
+        if (j->c == s[i]){
+            p = j; f=true; j->inDic=true; break;
+        }
+    }
+    }
+    if(!f){
+        addNode(p, s[i], true);
+        p = elements.back();
+    }
 
 }
 
@@ -139,41 +177,7 @@ void Trie::calcDicSuf(){
 
 }
 
-void Trie::addWord(string s){
-
-    pTrieNode p = root;
-    bool f = true;
-    int i;
-    for(i = 0; i < s.size()-1; i++){
-        if (f){
-            f = false;
-            for (pTrieNode j : p->child){
-                if (j->c == s[i]){
-                    p = j; f=true; break;
-                }
-            }
-        }
-        if(!f){
-            addNode(p, s[i], false);
-            p = elements.back();
-        }
-    }
-    if (f){
-    f = false;
-    for (pTrieNode j : p->child){
-        if (j->c == s[i]){
-            p = j; f=true; j->inDic=true; break;
-        }
-    }
-    }
-    if(!f){
-        addNode(p, s[i], true);
-        p = elements.back();
-    }
-
-}
-
-    //TRIE NODE
+//TRIE NODE//*****************
 
 void TrieNode::addSufx(pTrieNode parent){
 
