@@ -46,24 +46,26 @@ struct Trie{
 int main (){
 
     Trie T;
-    
-    string line;
-    getline(cin, line);
-    T.addWord(line);
-    getline(cin, line);
-    T.addWord(line);
-    getline(cin, line);
-    T.addWord(line);
-    
-    
-
-    T.calcSufx();
-    T.calcDicSuf();
-
-    int ret = 0;
-    ret+=T.numChg(":):)):)):)):(:((:(((:):)");
-    cout << ret;
-    //T.Reset();
+    int m, n;
+    while(cin >> m >> n){
+        if(m>0){
+            string line;
+            getline(cin, line);
+            for (int i = 0; i < m; i++){
+                getline(cin, line);
+                T.addWord(line);
+            }
+            T.calcSufx();
+            T.calcDicSuf();
+            int ret = 0;
+            for (int i = 0; i < n; i++){
+                getline(cin, line);
+                ret+=T.numChg(line);
+            }
+            cout << ret << endl;
+            T.Reset();
+        }
+    }
     T.Clear();
     return 0;
 }
@@ -216,7 +218,7 @@ int Trie::numChg(string s){
     }
     
 
-    //Caculating needed changes
+    //Calculating needed changes
     int del = -1;
     int ret = 0;
     while(endpos.size()){
