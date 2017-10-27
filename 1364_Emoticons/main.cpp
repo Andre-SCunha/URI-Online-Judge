@@ -37,6 +37,7 @@ struct Trie{
     void addWord(string s);
     void calcSufx();
     void calcDicSuf();
+    int numChg(string s);
 };
 
 /////////////////////////////
@@ -53,14 +54,15 @@ int main (){
     T.addWord(line);
     getline(cin, line);
     T.addWord(line);
-    getline(cin, line);
-    T.addWord(line);
+    
+    
 
     T.calcSufx();
     T.calcDicSuf();
-    for (pTrieNode d : T.elements){
-        cout << d->c << " " << d->size << " suf:" << (d->sufix==NULL?'N':d->sufix->c) <<"," << (d->sufix==NULL?'N':d->sufix->size) << " c:" << d->child.size()  << " d:" << d->inDic << " dsuf: " << (d->dicsuf==NULL?'N':d->dicsuf->c) << endl;
-    }
+
+    int ret = 0;
+    ret+=T.numChg(":):)):)):)):(:((:(((:):)");
+    cout << ret;
     //T.Reset();
     T.Clear();
     return 0;
@@ -175,6 +177,61 @@ void Trie::calcDicSuf(){
         queue.pop_front();
     }
 
+}
+
+int Trie::numChg(string s){
+
+    int n = 0;
+    list<int> sizes;
+    list<int> endpos;
+    pTrieNode aux, curr = root;
+    aux = curr;
+    //Making match list
+    for (char &ch : s){
+        //Finding next
+        bool found = false;
+        while(!found && aux != NULL){
+            for(pTrieNode son : aux->child){
+                if(ch == son->c){
+                    found = true;
+                    aux = son;
+                    break;
+                }
+            }
+            if(!found){
+                aux = aux->sufix;
+            }
+        }
+        curr = found?aux:root;
+        //Finding shortest match
+        aux = curr;
+        while(aux->dicsuf !=NULL){
+            aux = aux->dicsuf;
+        }
+        if(aux->inDic){
+            endpos.push_back(n);
+            sizes.push_back(aux->size);
+        }
+        n++;
+    }
+    
+
+    //Caculating needed changes
+    int del = -1;
+    int ret = 0;
+    while(endpos.size()){
+        int ini = endpos.back() - sizes.back() + 1;
+        del = (del>ini)?del:ini;
+        if(del >= endpos.back()){
+            ret++;
+            del = (del > endpos.back())?ini:-1;
+        }
+        endpos.pop_back();
+        sizes.pop_back();
+    }
+    if(del >= 0)
+        ret++;
+   return ret;
 }
 
 //TRIE NODE//*****************
